@@ -40,8 +40,8 @@
         </div>
     </div>
 
-    <script>
-     const carrito = [];
+<script>
+        const carrito = [];
 
         function agregarAlCarrito(idProducto, nombreProducto, precioProducto) {
             const cantidadInput = document.getElementById(`cantidad_${idProducto}`);
@@ -72,53 +72,87 @@
             }
         }
 
+        function actualizarCantidadEnCarrito(idProducto, nuevaCantidad) {
+            const productoExistente = carrito.find(producto => producto.id === idProducto);
 
-        function ajustarEspacios(texto, longitud) {
-            return texto.padEnd(longitud, ' ');
+            if (productoExistente) {
+                // Si el producto ya está en el carrito, actualizamos la cantidad
+                productoExistente.cantidad = nuevaCantidad;
+            } else {
+                console.log('Error: El producto no está en el carrito.');
+            }
+
+            actualizarCarrito();
         }
 
-        function actualizarCarrito() {
-            const carritoVenta = document.getElementById('carritoVenta');
-            carritoVenta.innerHTML = '';
-
-            // Encabezado
-            const header = document.createElement('li');
-            header.textContent = ajustarEspacios('Nombre', 1000) + '| Cantidad | Precio Unitario | Subtotal';
-            carritoVenta.appendChild(header);
-
-            let total = 0;
-
-
-            carrito.forEach(producto => {
-                const listItem = document.createElement('li');
-                const nombreAjustado = ajustarEspacios(producto.nombre, 25);
-                const subtotal = producto.precio * producto.cantidad;
-                listItem.textContent = `${nombreAjustado} | ${producto.cantidad} | Bs ${producto.precio} | Bs ${subtotal}`;
-                total += subtotal;
-                carritoVenta.appendChild(listItem);
-            });
-
-            // Línea separadora
-            const separator = document.createElement('li');
-            separator.textContent = '--------------------------------------------------';
-            carritoVenta.appendChild(separator);
-
-            // Total
-            const totalItem = document.createElement('li');
-            totalItem.textContent = ajustarEspacios(`Total: $${total}`, 56);
-            carritoVenta.appendChild(totalItem);
-        }
         function ajustarEspacios(texto, longitud) {
             const espacioAdicional = longitud - texto.length;
             return texto + ' '.repeat(espacioAdicional);
         }
 
+        function actualizarCarrito() {
+        const carritoVenta = document.getElementById('carritoVenta');
+        carritoVenta.innerHTML = '';
 
+        // Encabezado de la tabla
+        const header = document.createElement('li');
+        header.classList.add('flex', 'justify-between', 'items-center', 'my-4', 'border-b', 'py-2');
+        carritoVenta.appendChild(header);
 
-// Luego, puedes llamar a esta función desde donde sea necesario, por ejemplo, en un botón de "Actualizar" en la lista del carrito
+        // Nombres de las columnas
+        const columnNames = ['Nombre', 'Cantidad', 'Precio Unitario', 'Subtotal'];
+        columnNames.forEach(columnName => {
+            const columnNameElement = document.createElement('span');
+            columnNameElement.textContent = columnName;
+            columnNameElement.classList.add('w-1/4', 'font-bold');
+            header.appendChild(columnNameElement);
+        });
 
+        let total = 0;
 
-    </script>
+        carrito.forEach(producto => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('flex', 'justify-between', 'items-center', 'py-2', 'border-b');
+
+            // Contenido de las celdas
+            const nombreAjustado = ajustarEspacios(producto.nombre, 25);
+            const nombreAjustadoElement = document.createElement('span');  // CORRECCIÓN AQUÍ
+            nombreAjustadoElement.textContent = nombreAjustado;  // CORRECCIÓN AQUÍ
+
+            const cantidadElement = document.createElement('span');
+            cantidadElement.textContent = producto.cantidad;
+            cantidadElement.classList.add('w-1/4');
+
+            const precioElement = document.createElement('span');
+            precioElement.textContent = `Bs ${producto.precio}`;
+            precioElement.classList.add('w-1/4');
+
+            const subtotal = producto.precio * producto.cantidad;
+            const subtotalElement = document.createElement('span');
+            subtotalElement.textContent = `Bs ${subtotal}`;
+            subtotalElement.classList.add('w-1/4');
+
+            listItem.appendChild(nombreAjustadoElement);  // CORRECCIÓN AQUÍ
+            listItem.appendChild(cantidadElement);
+            listItem.appendChild(precioElement);
+            listItem.appendChild(subtotalElement);
+
+            total += subtotal;
+            carritoVenta.appendChild(listItem);
+        });
+
+        // Total
+        const totalItem = document.createElement('li');
+        totalItem.classList.add('font-bold', 'text-xl', 'mt-4');
+        totalItem.textContent = `Total: Bs ${total}`;
+        carritoVenta.appendChild(totalItem);
+    }
+
+    function ajustarEspacios(texto, longitud) {
+        const espacioAdicional = longitud - texto.length;
+        return texto + ' '.repeat(espacioAdicional);
+    }
+</script>
 </x-app-layout>
 
 
